@@ -1,25 +1,11 @@
-# Used for Allo
-# Python Algorithm from https://github.com/wborgeaud/python-pippenger/blob/master/src/pippenger.py
-# Maya and Arsalan 
-
 from sympy import integer_nthroot
 from math import log2, floor
 from itertools import combinations
-# ^^ Have to figure out ways to do this w/o ^^ 
-
-# Using example files from Allo github as an example to mimic
-# Such as gemm.py 
-
-import os
-import json
-import allo
-from allo.ir.types import int32, float32
-import allo.ir.types as T
 
 def subset_of(l):
     return sum(map(lambda r: list(combinations(l, r)), range(1, len(l)+1)), [])
 
-def pippenger(concrete_type, p, r, q, beta=0.1):
+class Pippenger:
     def __init__(self, group):
         self.G = group
         self.order = group.order
@@ -106,35 +92,5 @@ def pippenger(concrete_type, p, r, q, beta=0.1):
             Gs.append(tmp)
             
         return Gs
-
-    def kernel_pip[
-        T: (float32, int32), P: int32, Q: int32, R: int32
-    ](A: "T[P, Q]", B: "T[Q, R]", C: "T[P, R]", output: "T[P, R]"):
-        out_AB: T[P, R]
-        mm1[T, P, Q, R](A, B, out_AB)
-        ele_add[T, P, R](out_AB, C, output)
-
-    sch0 = allo.customize(__init__, instantiate=[concrete_type, p, q, r])
-    sch1 = allo.customize(_pow2ofpow2, instantiate=[concrete_type, p, r])
-    sch2 = allo.customize(multiexp, instantiate=[concrete_type, p, q, r])
-    sch3 = allo.customize(_multiexp_bin, instantiate=[concrete_type, p, q, r])
-
-    sch = allo.customize(kernel_pip, instantiate=[concrete_type, p, q, r])
-    sch.compose(sch0)
-    sch.compose(sch1) 
-    sch.compose(sch2)
-    sch.compose(sch3)
-    
-
-if __name__ == "__main__":
-    P = 5
-    R = 5
-    Q = 5
-    beta = 0.1
-    concrete_type = float32
-    sch = pippenger(concrete_type, P, R, Q, beta=beta)
-    mod = sch.build()
-    
-
 
             

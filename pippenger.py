@@ -1,4 +1,4 @@
-#from sympy import integer_nthroot
+from sympy import integer_nthroot
 from math import log2, floor
 from itertools import combinations
 from group import Group
@@ -6,7 +6,7 @@ from group import Group
 # hello 
 # goodbyes
 
-def integer_nthroot(y, n):
+'''def integer_nthroot(y, n):
     """
     Return a tuple containing x = floor(y**(1/n))
     and a boolean indicating whether the result is exact (that is,
@@ -77,7 +77,7 @@ def integer_nthroot(y, n):
         x -= 1
         t = x**n
     return int(x), t == y  # int converts long to int if possible
-
+'''
 
 
 

@@ -1,15 +1,17 @@
 from sympy import integer_nthroot
 from math import log2, floor
 from itertools import combinations
+from group import Group
 
 def subset_of(l):
     return sum(map(lambda r: list(combinations(l, r)), range(1, len(l)+1)), [])
 
 class Pippenger:
-    def __init__(self, group):
-        self.G = group
-        self.order = group.order
-        self.lamb = group.order.bit_length()
+    def __init__(self, group : Group):
+        self.G : Group = group
+        self.order : int = group.order
+        # self.lamb is the number of bits required to represent the order.
+        self.lamb : int = group.order.bit_length()
     
     # Returns g^(2^j)
     def _pow2powof2(self, g, j):

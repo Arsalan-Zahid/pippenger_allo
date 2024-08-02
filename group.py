@@ -4,9 +4,9 @@ from ecdsa.ellipticcurve import Point
 
 class Group(ABC):
 
-    def __init__(self, unit, order):
-        self.unit = unit
-        self.order = order
+    def __init__(self, unit: int, order: int):
+        self.unit : int = unit
+        self.order : int = order
     
     @abstractmethod
     def mult(self, x, y):
@@ -17,7 +17,7 @@ class Group(ABC):
     
 
 class MultIntModP(Group):
-    def __init__(self, p, order):
+    def __init__(self, p : int, order : int):
         Group.__init__(self, ModP(1, p), order)
 
     def mult(self, x, y):

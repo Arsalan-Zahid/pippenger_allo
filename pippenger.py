@@ -1,7 +1,84 @@
-from sympy import integer_nthroot
+#from sympy import integer_nthroot
 from math import log2, floor
 from itertools import combinations
 from group import Group
+
+
+
+def integer_nthroot(y, n):
+    """
+    Return a tuple containing x = floor(y**(1/n))
+    and a boolean indicating whether the result is exact (that is,
+    whether x**n == y).
+
+    Examples
+    ========
+
+    >>> from sympy import integer_nthroot
+    >>> integer_nthroot(16, 2)
+    (4, True)
+    >>> integer_nthroot(26, 2)
+    (5, False)
+
+    To simply determine if a number is a perfect square, the is_square
+    function should be used:
+
+    >>> from sympy.ntheory.primetest import is_square
+    >>> is_square(26)
+    False
+
+    See Also
+    ========
+    sympy.ntheory.primetest.is_square
+    integer_log
+    """
+    y, n = as_int(y), as_int(n)
+    if y < 0:
+        raise ValueError("y must be nonnegative")
+    if n < 1:
+        raise ValueError("n must be positive")
+    if y in (0, 1):
+        return y, True
+    if n == 1:
+        return y, True
+    if n == 2:
+        x, rem = mpmath_sqrtrem(y)
+        return int(x), not rem
+    if n > y:
+        return 1, False
+    # Get initial estimate for Newton's method. Care must be taken to
+    # avoid overflow
+    try:
+        guess = int(y**(1./n) + 0.5)
+    except OverflowError:
+        exp = _log(y, 2)/n
+        if exp > 53:
+            shift = int(exp - 53)
+            guess = int(2.0**(exp - shift) + 1) << shift
+        else:
+            guess = int(2.0**exp)
+    if guess > 2**50:
+        # Newton iteration
+        xprev, x = -1, guess
+        while 1:
+            t = x**(n - 1)
+            xprev, x = x, ((n - 1)*x + y//t)//n
+            if abs(x - xprev) < 2:
+                break
+    else:
+        x = guess
+    # Compensate
+    t = x**n
+    while t < y:
+        x += 1
+        t = x**n
+    while t > y:
+        x -= 1
+        t = x**n
+    return int(x), t == y  # int converts long to int if possible
+
+
+
 
 def subset_of(l):
     return sum(map(lambda r: list(combinations(l, r)), range(1, len(l)+1)), [])
@@ -21,20 +98,30 @@ class Pippenger:
         return tmp
 
     # Returns Prod g_i ^ e_i
-    def multiexp(self, gs, es):
+    def multiexp(self, gs: list[int], es: list[int]):
+
+        # gs is group elements
+        # es is the exponents
         if len(gs) != len(es):
             raise Exception('Different number of group elements and exponents')
 
+        # Modulo all of them by the order
+        # TODO replace with an allo loop
         es = [ei%self.G.order for ei in es]
 
+        #remove in allo
         if len(gs) == 0:
             return self.G.unit
 
+
         lamb = self.lamb
         N = len(gs)
+        #TODO bring in from sympy
+        # Also note that the sympy function returns a tuple 
         s = integer_nthroot(lamb//N, 2)[0]+1
         t = integer_nthroot(lamb*N,2)[0]+1
         gs_bin = []
+        
         for i in range(N):
             tmp = [gs[i]]
             for j in range(1,s):

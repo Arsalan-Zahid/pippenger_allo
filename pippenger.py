@@ -181,5 +181,18 @@ class Pippenger:
             Gs.append(tmp)
             
         return Gs
+    
+    '''
+    sch0 = allo.customize(__init__, instantiate=[concrete_type, p, q, r])
+    sch1 = allo.customize(_pow2ofpow2, instantiate=[concrete_type, p, r])
+    sch2 = allo.customize(multiexp, instantiate=[concrete_type, p, q, r])
+    sch3 = allo.customize(_multiexp_bin, instantiate=[concrete_type, p, q, r])
+
+    sch = allo.customize(kernel_pip, instantiate=[concrete_type, p, q, r])
+    sch.compose(sch0)
+    sch.compose(sch1) 
+    sch.compose(sch2)
+    sch.compose(sch3)
+    '''
 
             

@@ -3,8 +3,7 @@ from math import log2, floor
 from itertools import combinations
 from group import Group
 
-# hello 
-# goodbyes
+
 
 '''def integer_nthroot(y, n):
     """
@@ -87,10 +86,13 @@ def subset_of(l):
 class Pippenger:
     def __init__(self, group : Group):
         self.G : Group = group
+        'G is the group used to initialize the Pippenger instance.'
+        
         self.order : int = group.order
-        # self.lamb is the number of bits required to represent the order.
+        
         self.lamb : int = group.order.bit_length()
-    
+        'lamb is the number of bits required to represent the order.'
+
     # Returns g^(2^j)
     def _pow2powof2(self, g, j):
         tmp = g
@@ -98,8 +100,8 @@ class Pippenger:
             tmp = self.G.square(tmp)
         return tmp
 
-    # Returns Prod g_i ^ e_i
-    def multiexp(self, gs: list[int], es: list[int]):
+    # Returns Prod of all g_i ^ e_i
+    def multiexp(self, gs: list[Group], es: list[int]) -> int:
 
         # gs is group elements
         # es is the exponents
@@ -108,26 +110,46 @@ class Pippenger:
 
         # Modulo all of them by the order
         # TODO replace with an allo loop
-        es = [ei%self.G.order for ei in es]
+        es: list[int] = [ei%self.G.order for ei in es]
 
-        #remove in allo
+        #remove in allo?
         if len(gs) == 0:
             return self.G.unit
+            # If there is only one group, return self's unit?
 
 
-        lamb = self.lamb
+        lamb: int = self.lamb
+        'lamb is th2e number of bits required to represent the order.'
+
         N = len(gs)
         #TODO bring in from sympy
-        # Also note that the sympy function returns a tuple 
-        s = integer_nthroot(lamb//N, 2)[0]+1
-        t = integer_nthroot(lamb*N,2)[0]+1
-        gs_bin = []
-        
+        # Also note that the sympy function returns a tuple, 
+        # but this gets the first element and ceil's it.
+
+        # so it does floor(y**(1/n))
+        # but this does ceil(y**(1/n))
+        # this extends to ceil((lamb//N)**(1/2))
+        #   Or ceil(sqrt(lamb//N))
+        # For the other one, 
+        #   ceil(sqrt(lamb*N))
+
+        # TODO figure out what these are
+        s: int = integer_nthroot(lamb//N, 2)[0]+1
+        t: int = integer_nthroot(lamb*N,2)[0]+1
+        gs_bin: list[list[Group]] = []
+
+       
         for i in range(N):
             tmp = [gs[i]]
-            for j in range(1,s):
-                tmp.append(self.G.square(tmp[-1]))
+            for j in range(1,s): # Go through one to  sqrt(lamb//N)
+                # Take the last element in the temp array, square it, and append it to the back of the temp array
+                tmp.append(self.G.square(tmp[-1])) 
+                # So this would basically be an array []
+                #   Is this for breaking up integers??
+
+            #It's interesting how it appends an array onto this array
             gs_bin.append(tmp)
+        
         es_bin = []
         for i in range(N):
             tmp1 = []

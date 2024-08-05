@@ -89,11 +89,13 @@ class Pippenger:
         'G is the group used to initialize the Pippenger instance.'
         
         self.order : int = group.order
+        'Order p = 2^lambda'
         
         self.lamb : int = group.order.bit_length()
         'lamb is the number of bits required to represent the order.'
 
     # Returns g^(2^j)
+    # This is for section 2, g'_(i,j)
     def _pow2powof2(self, g, j):
         tmp = g
         for _ in range(j):
@@ -119,7 +121,7 @@ class Pippenger:
 
 
         lamb: int = self.lamb
-        'lamb is th2e number of bits required to represent the order.'
+        'lamb is the number of bits required to represent the order.'
 
         N = len(gs)
         #TODO bring in from sympy
@@ -139,27 +141,43 @@ class Pippenger:
         gs_bin: list[list[Group]] = []
 
        
+        # For every one of our Pi*Ki?
         for i in range(N):
+
+            
+            # I believe this is gathering all the g's to the right side of figure 2.1
             tmp = [gs[i]]
-            for j in range(1,s): # Go through one to  sqrt(lamb//N)
+            for j in range(1,s): # Go through one to sqrt(lamb//N), or s. 
                 # Take the last element in the temp array, square it, and append it to the back of the temp array
                 tmp.append(self.G.square(tmp[-1])) 
                 # So this would basically be an array []
-                #   Is this for breaking up integers??
+                #   This definitely seems to be building the binary integer in 2.1 down a column
 
-            #It's interesting how it appends an array onto this array
+            #It's interesting how it appends an array onto this array, making this a 2d array
+            # It's like it's all the e_i's concatenated together
             gs_bin.append(tmp)
         
-        es_bin = []
+
+        # I don't kno if this typingg is right
+        es_bin: list[list[list[int]]] = []
+        # It looks like this algorithm skips the last factorization in the code interestingly enough in section 2?
+        # actually idk
         for i in range(N):
-            tmp1 = []
+            tmp1: list[list[int]] = []
             for j in range(s):
-                tmp2 = []
+                tmp2: list[int] = []
+                # interesting how this loops on the outside
                 for k in range(t):
+                    # get the integer in a binary string, pad it to the left to s*t, then get index 
+                    # Maybe this is for e'? section 2
+                    # It looks like this part is getting the integers to the left of 2.1
                     tmp2.append(int( bin(es[i])[2:].zfill(s*t)[-(j+s*k+1)]) )
+                # So tmp1 will be more of a 2d array
                 tmp1.append(tmp2)
+                # and es bin a 3d array?
             es_bin.append(tmp1)
         
+        # I believe this part is a column for every e_i until e_(N-1) as shown in 2.1
         Gs = self._multiexp_bin(
                 [gs_bin[i][j] for i in range(N) for j in range(s)],
                 [es_bin[i][j] for i in range(N) for j in range(s)]

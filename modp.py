@@ -10,6 +10,7 @@ class ModP:
         self.p : int = p
 
     def __add__(self, y : 'int | ModP') -> 'ModP':
+        "Adds an int to the ModP's x value, OR adds the x value's of 2 ModPs, then modulos it by p."
 
         # If adding an integer add it
         if isinstance(y, int):

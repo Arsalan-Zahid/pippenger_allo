@@ -1,12 +1,16 @@
 from abc import ABC, abstractmethod
-from modp import ModP
 from ecdsa.ellipticcurve import Point
+from modp import ModP
+
 
 class Group(ABC):
 
-    def __init__(self, unit: int, order: int):
-        self.unit : int = unit
+    def __init__(self, unit: ModP | Point, order: int):
+        self.unit : ModP | Point = unit
+        'A ModP with x = 1 and p is set by MultiIntModP\'s constructor.'
+
         self.order : int = order
+        'Second arg to constructor.'
     
     @abstractmethod
     def mult(self, x, y):

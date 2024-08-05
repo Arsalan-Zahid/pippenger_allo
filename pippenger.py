@@ -7,6 +7,7 @@ def subset_of(l):
     return sum(map(lambda r: list(combinations(l, r)), range(1, len(l)+1)), [])
 
 class Pippenger:
+
     def __init__(self, group : Group):
         self.G : Group = group
         self.order : int = group.order
@@ -20,6 +21,8 @@ class Pippenger:
             tmp = self.G.square(tmp)
         return tmp
 
+    # multiexp - Arsalan 
+    
     # Returns Prod g_i ^ e_i
     def multiexp(self, gs: list[int], es: list[int]):
 
@@ -71,14 +74,20 @@ class Pippenger:
             ans2 = self.G.mult(ans2, Gs[k])
 
         return ans2
+
+    # _multiexp_bin - Maya 
         
-    def _multiexp_bin(self, gs, es):
+    def _multiexp_bin(self, gs: list[int], es: list[int]):
+        # gs is a list of elements of G, es is a list of integer exponents
+        # looks like gs and es have to be the same length 
         assert len(gs) == len(es)
-        M = len(gs)
-        b = floor( log2(M) - log2(log2(M)) )
+        M: int = len(gs)
+        b: int = floor( log2(M) - log2(log2(M)) ) # this calculation is used in the effeciency analysis section of Bootle's paper. 
+                                        
         b = b if b else 1
-        subsets = [list(range(i,min(i+b,M))) for i in range(0,M,b)]
-        Ts = [{sub: None for sub in subset_of(S)} for S in subsets]
+        subsets: list[list[int]] = [list(range(i,min(i+b,M))) for i in range(0,M,b)]
+        Ts = [{sub: None for sub in subset_of(S)} for S in subsets] # Look like sympy is needed
+                                                                    # Was not able to find the type on VS Code
 
         for T,S in zip(Ts, subsets):
             for i in S:

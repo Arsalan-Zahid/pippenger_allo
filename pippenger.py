@@ -137,7 +137,11 @@ def subset_of(l):
         # https://www.w3schools.com/python/ref_func_range.asp
 
     # SO, after dissection of subset_of(l), this is what I understand: 
-
+        # There is a lot happening, but to put it together let's go from the innermost part to the outermost part.
+            # the map function is using lambda and creating a combinations function for all lengths of l from 1 to l. 
+                # so now there are l amount of functions that allow you to return all the subsets of that specific l of any inputted length r.  
+        # The user must specify the length with a parameter (which in this case is r)
+        # The sum function I am not currently sure why it is there. Perhaps it creates a list of the function definitions? 
 class Pippenger:
 
     # Constructor of the pippenger class 

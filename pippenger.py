@@ -153,41 +153,48 @@ class Pippenger:
         self.order : int = group.order
         'Order p = 2^lambda'
         
-        self.lamb : int = group.order.bit_length()source //scratch/aross50/virtEnvs/vAllo/bin/activate
+        self.lamb : int = group.order.bit_length()#source //scratch/aross50/virtEnvs/vAllo/bin/activate
         'lamb is the number of bits required to represent the order.'
 
     # Returns g^(2^j)
     # This is for section 2, g'_(i,j)
-    def _pow2powof2(self, g, j):
-        tmp = g
+    # Pretty simple function
+    def _pow2powof2(self, g: Group, j: int) -> Group:
+        tmp: Group = g
         for _ in range(j):
-            tmp = self.G.square(tmp)
+            tmp: int = self.G.square(tmp)
         return tmp
 
     # multiexp - Arsalan 
     
     # Returns Prod of all g_i ^ e_i
-    def multiexp(self, gs: list[Group], es: list[int]) -> int:
+    # Return type is same as group.py
+    def multiexp(self, gs: list[Group], es: list[int]) -> ModP | Point:
 
         # gs is group elements
         # es is the exponents
-        if len(gs) != len(es):
-            raise Exception('Different number of group elements and exponents')
+        N = len(gs)
+        #if len(gs) != len(es):
+        #    raise Exception('Different number of group elements and exponents')
 
         # Modulo all of them by the order
         # TODO replace with an allo loop
-        es: list[int] = [ei%self.G.order for ei in es]
+        #es: list[int] = [ei%self.G.order for ei in es]
+
+
+        for i in allo.grid(N):
+            es[i] = es[i] % self.G.order
+
 
         #remove in allo?
-        if len(gs) == 0:
-            return self.G.unit
+        #if len(gs) == 0:
+        #    return self.G.unit
             # If there is only one group, return self's unit?
 
 
         lamb: int = self.lamb
         'lamb is the number of bits required to represent the order.'
 
-        N = len(gs)
         #TODO bring in from sympy
         # Also note that the sympy function returns a tuple, 
         # but this gets the first element and ceil's it.
@@ -202,7 +209,7 @@ class Pippenger:
         # TODO figure out what these are
         s: int = integer_nthroot(lamb//N, 2)[0]+1
         t: int = integer_nthroot(lamb*N,2)[0]+1
-        gs_bin: list[list[Group]] = []
+        gs_bin: list[list[list[Group]]] = []
 
        
         # For every one of our Pi*Ki?
@@ -247,16 +254,19 @@ class Pippenger:
                 [es_bin[i][j] for i in range(N) for j in range(s)]
                 )
 
-        ans2 = Gs[-1]
+        #Get and return the final answer
+        ans2: Group = Gs[-1]
+        # Raise to the power of s len(Gs)-1 times?
+        # Also getting k value
         for k in range(len(Gs)-2,-1,-1):
-            ans2 = self._pow2powof2(ans2, s)
-            ans2 = self.G.mult(ans2, Gs[k])
+            ans2: Group = self._pow2powof2(ans2, s)
+            ans2: Group = self.G.mult(ans2, Gs[k])
 
         return ans2
 
     # _multiexp_bin - Maya 
         
-    def _multiexp_bin(self, gs: list[Group], es: list[int] -> list):
+    def _multiexp_bin(self, gs: list[Group], es: list[int]) -> list:
         # gs is a list of elements of G, es is a list of integer exponents
         # looks like gs and es have to be the same length 
         assert len(gs) == len(es)

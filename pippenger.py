@@ -2,8 +2,8 @@ from sympy import integer_nthroot
 from math import log2, floor
 from itertools import combinations
 from group import Group
-
-
+from modp import ModP
+from ecdsa.ellipticcurve import Point
 
 '''def integer_nthroot(y, n):
     """
@@ -79,11 +79,75 @@ from group import Group
 '''
 
 
+# Dissected by Maya 
 
 def subset_of(l):
     return sum(map(lambda r: list(combinations(l, r)), range(1, len(l)+1)), [])
+    
+    # SUM     
 
+        # sum: a python built-in function that "returns a number, the sum of all items in an iterable" 
+            # if two parameters it is sum(the tuple sequence to sum, an option number that can be added to the return value) 
+                # looks like the sequence to sum comes from the map function. Analysis of that will be in the map comment. 
+                # the second parameter is []. Maybe the first parameter of map is a list, which would allow it to be added into this empty list parameter.
+                    # further map analysis below vvv 
+        # https://www.w3schools.com/python/ref_func_sum.asp
+    
+    # MAP 
+
+        # map: a python built-in function that "applies a given function to each item of iterable (like list, tuple etc.) and returns a list of results or map object." 
+            # if two parameters it is map(function, iterable)
+            # the function must have ONE parameter for each iterable 
+            # you can add iterables that would correspond to having more parameters in the function (which is the first parameter of map)
+            # it looks like the function passed in is lambda r: list(combinations(l, r)) and the iterable to have each number have that function done on it is range(1, len(l) +1)) 
+                # further analysis of combinations and lambda below vvv
+        #  https://www.geeksforgeeks.org/python-pass-multiple-arguments-to-map-function/
+
+    # COMBINATIONS 
+    
+        # combinations: a python itertools function that returns "r length subsequences of elements from the input iterable."
+                      # "The output is a subsequence of product() keeping only entries that are subsequences of the iterable. The length of the output is given by math.comb() which computes n! / r! / (n - r)! when 0 ≤ r ≤ n or zero when r > n." 
+                      # seems like this is what I learned in CS 151. Combinations WITHOUT repeats. Remember order doesn't matter like it does with permutations.
+            # Some examples: 
+                # combinations('ABCD', 2) → AB AC AD BC BD CD
+                # combinations(range(4), 3) → 012 013 023 123
+
+        # https://docs.python.org/3/library/itertools.html#itertools.combinations
+    
+    # LAMBDA 
+
+        # lambda: "A lambda function is a small anonymous function. A lambda function can take any number of arguments, but can only have one expression."
+            # simple example: 
+                # x = lambda a : a + 10
+                # print(x(5))
+                # ouput is 15. 
+        # lambda is often used as the return for another function so you can make custom small functions. This is how it is used here, notingly. 
+            # simple example (Use that function definition to make a function that always doubles the number you send in): 
+                # def myfunc(n):
+                    # return lambda a : a * n
+
+            # mydoubler = myfunc(2)
+
+            # print(mydoubler(11))
+        # https://www.w3schools.com/python/python_lambda.asp
+    
+    # RANGE 
+
+        # range: a python built-in "function that returns a sequence of numbers, starting from 0 by default, and increments by 1 (by default), and stops before a specified number." 
+            # if two parameters it is range(start that is inclusive, stop that is exclusive)
+            # in this case, start is 1 and the length of l is the last number that will be returned.
+        # https://www.w3schools.com/python/ref_func_range.asp
+
+    # SO, after dissection of subset_of(l), this is what I understand: 
+        # There is a lot happening, but to put it together let's go from the innermost part to the outermost part.
+            # the map function is using lambda and creating a combinations function for all lengths of l from 1 to l. 
+                # so now there are l amount of functions that allow you to return all the subsets of that specific l of any inputted length r.  
+        # The user must specify the length with a parameter (which in this case is r)
+        # The sum function I am not currently sure why it is there. Perhaps it creates a list of the function definitions? 
 class Pippenger:
+
+    # Constructor of the pippenger class 
+    # Note: self is like the this keyword in C++ 
     def __init__(self, group : Group):
         self.G : Group = group
         'G is the group used to initialize the Pippenger instance.'
@@ -91,39 +155,48 @@ class Pippenger:
         self.order : int = group.order
         'Order p = 2^lambda'
         
-        self.lamb : int = group.order.bit_length()
+        self.lamb : int = group.order.bit_length()#source //scratch/aross50/virtEnvs/vAllo/bin/activate
         'lamb is the number of bits required to represent the order.'
 
     # Returns g^(2^j)
     # This is for section 2, g'_(i,j)
-    def _pow2powof2(self, g, j):
-        tmp = g
+    # Pretty simple function
+    def _pow2powof2(self, g: Group, j: int) -> Group:
+        tmp: Group = g
         for _ in range(j):
-            tmp = self.G.square(tmp)
+            tmp: int = self.G.square(tmp)
         return tmp
 
+    # multiexp - Arsalan 
+    
     # Returns Prod of all g_i ^ e_i
-    def multiexp(self, gs: list[Group], es: list[int]) -> int:
+    # Return type is same as group.py
+    def multiexp(self, gs: list[Group], es: list[int]) -> ModP | Point:
 
         # gs is group elements
         # es is the exponents
-        if len(gs) != len(es):
-            raise Exception('Different number of group elements and exponents')
+        N = len(gs)
+        #if len(gs) != len(es):
+        #    raise Exception('Different number of group elements and exponents')
 
         # Modulo all of them by the order
         # TODO replace with an allo loop
-        es: list[int] = [ei%self.G.order for ei in es]
+        #es: list[int] = [ei%self.G.order for ei in es]
+
+
+        for i in allo.grid(N):
+            es[i] = es[i] % self.G.order
+
 
         #remove in allo?
-        if len(gs) == 0:
-            return self.G.unit
+        #if len(gs) == 0:
+        #    return self.G.unit
             # If there is only one group, return self's unit?
 
 
         lamb: int = self.lamb
         'lamb is the number of bits required to represent the order.'
 
-        N = len(gs)
         #TODO bring in from sympy
         # Also note that the sympy function returns a tuple, 
         # but this gets the first element and ceil's it.
@@ -138,7 +211,7 @@ class Pippenger:
         # TODO figure out what these are
         s: int = integer_nthroot(lamb//N, 2)[0]+1
         t: int = integer_nthroot(lamb*N,2)[0]+1
-        gs_bin: list[list[Group]] = []
+        gs_bin: list[list[list[Group]]] = []
 
        
         # For every one of our Pi*Ki?
@@ -158,7 +231,7 @@ class Pippenger:
             gs_bin.append(tmp)
         
 
-        # I don't kno if this typingg is right
+        # I don't know if this typing is right
         es_bin: list[list[list[int]]] = []
         # It looks like this algorithm skips the last factorization in the code interestingly enough in section 2?
         # actually idk
@@ -183,20 +256,37 @@ class Pippenger:
                 [es_bin[i][j] for i in range(N) for j in range(s)]
                 )
 
-        ans2 = Gs[-1]
+        #Get and return the final answer
+        ans2: Group = Gs[-1]
+        # Raise to the power of s len(Gs)-1 times?
+        # Also getting k value
         for k in range(len(Gs)-2,-1,-1):
-            ans2 = self._pow2powof2(ans2, s)
-            ans2 = self.G.mult(ans2, Gs[k])
+            ans2: Group = self._pow2powof2(ans2, s)
+            ans2: Group = self.G.mult(ans2, Gs[k])
 
         return ans2
+
+    # _multiexp_bin - Maya 
         
-    def _multiexp_bin(self, gs, es):
+    def _multiexp_bin(self, gs: list[Group], es: list[int]) -> list:
+        # gs is a list of elements of G, es is a list of integer exponents
+        # looks like gs and es have to be the same length 
         assert len(gs) == len(es)
-        M = len(gs)
-        b = floor( log2(M) - log2(log2(M)) )
-        b = b if b else 1
-        subsets = [list(range(i,min(i+b,M))) for i in range(0,M,b)]
-        Ts = [{sub: None for sub in subset_of(S)} for S in subsets]
+        #  M is the length of gs 
+        M: int = len(gs)
+        # b is the floor of a calculation that appeared in effeciency analysis section of Bootle's paper. 
+        # This calculation also appeared in section 6 of Bernstein's paper under "Recursion level 1"
+        b: int = floor( log2(M) - log2(log2(M)) )                                 
+        b = b if b else 1 # prevents b from being 0 i
+
+        # TODO
+        # Figure out what subsets is and TS 
+
+        # Subsets -> 
+        subsets: list[list[int]] = [list(range(i,min(i+b,M))) for i in range(0,M,b)]
+
+        # TS -> 
+        Ts = [{sub: None for sub in subset_of(S)} for S in subsets] 
 
         for T,S in zip(Ts, subsets):
             for i in S:

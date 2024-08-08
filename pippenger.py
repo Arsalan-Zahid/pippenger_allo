@@ -1,11 +1,13 @@
-from sympy import integer_nthroot
+#from sympy import integer_nthroot
 from math import log2, floor
 from itertools import combinations
 from group import Group
 from modp import ModP
 from ecdsa.ellipticcurve import Point
 
-'''def integer_nthroot(y, n):
+def integer_nthroot(y: int, n: int):
+    return floor(y**(1/n)), False
+    '''
     """
     Return a tuple containing x = floor(y**(1/n))
     and a boolean indicating whether the result is exact (that is,
@@ -32,7 +34,7 @@ from ecdsa.ellipticcurve import Point
     sympy.ntheory.primetest.is_square
     integer_log
     """
-    y, n = as_int(y), as_int(n)
+    #y, n = as_int(y), as_int(n)
     if y < 0:
         raise ValueError("y must be nonnegative")
     if n < 1:
@@ -42,8 +44,8 @@ from ecdsa.ellipticcurve import Point
     if n == 1:
         return y, True
     if n == 2:
-        x, rem = mpmath_sqrtrem(y)
-        return int(x), not rem
+        #x, rem = mpmath_sqrtrem(y)
+        return int(x**(1/2)), not False
     if n > y:
         return 1, False
     # Get initial estimate for Newton's method. Care must be taken to
@@ -176,21 +178,16 @@ class Pippenger:
         # gs is group elements
         # es is the exponents
         N = len(gs)
-        #if len(gs) != len(es):
-        #    raise Exception('Different number of group elements and exponents')
+        if len(gs) != len(es):
+            raise Exception('Different number of group elements and exponents')
 
         # Modulo all of them by the order
         # TODO replace with an allo loop
-        #es: list[int] = [ei%self.G.order for ei in es]
-
-
-        for i in allo.grid(N):
-            es[i] = es[i] % self.G.order
-
+        es: list[int] = [ei%self.G.order for ei in es]
 
         #remove in allo?
-        #if len(gs) == 0:
-        #    return self.G.unit
+        if len(gs) == 0:
+            return self.G.unit
             # If there is only one group, return self's unit?
 
 

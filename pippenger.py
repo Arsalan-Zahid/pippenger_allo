@@ -1,9 +1,14 @@
-from sympy import integer_nthroot
-from math import log2, floor
+#from sympy import integer_nthroot
+from math import log2#, floor
+# Log should be allo.log
 from itertools import combinations
 from group import Group
+from modp import ModP
+from ecdsa.ellipticcurve import Point
 
-'''def integer_nthroot(y, n):
+def integer_nthroot(y: int, n: int):
+    return int(y**(1/n)), False
+    '''
     """
     Return a tuple containing x = floor(y**(1/n))
     and a boolean indicating whether the result is exact (that is,
@@ -30,7 +35,7 @@ from group import Group
     sympy.ntheory.primetest.is_square
     integer_log
     """
-    y, n = as_int(y), as_int(n)
+    #y, n = as_int(y), as_int(n)
     if y < 0:
         raise ValueError("y must be nonnegative")
     if n < 1:
@@ -40,8 +45,8 @@ from group import Group
     if n == 1:
         return y, True
     if n == 2:
-        x, rem = mpmath_sqrtrem(y)
-        return int(x), not rem
+        #x, rem = mpmath_sqrtrem(y)
+        return int(x**(1/2)), not False
     if n > y:
         return 1, False
     # Get initial estimate for Newton's method. Care must be taken to
@@ -274,7 +279,7 @@ class Pippenger:
         M: int = len(gs)
         # b is the floor of a calculation that appeared in effeciency analysis section of Bootle's paper. 
         # This calculation also appeared in section 6 of Bernstein's paper under "Recursion level 1"
-        b: int = floor( log2(M) - log2(log2(M)) )                                 
+        b: int = int( log2(M) - log2(log2(M)) )                                 
         b = b if b else 1 # prevents b from being 0 i
 
         # TODO

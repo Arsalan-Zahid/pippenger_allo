@@ -75,77 +75,16 @@ from group import Group
         t = x**n
     return int(x), t == y  # int converts long to int if possible
 '''
-
-
-# Dissected by Maya 
+ 
 
 def subset_of(l):
     return sum(map(lambda r: list(combinations(l, r)), range(1, len(l)+1)), [])
     
-    # SUM     
-
-        # sum: a python built-in function that "returns a number, the sum of all items in an iterable" 
-            # if two parameters it is sum(the tuple sequence to sum, an option number that can be added to the return value) 
-                # looks like the sequence to sum comes from the map function. Analysis of that will be in the map comment. 
-                # the second parameter is []. Maybe the first parameter of map is a list, which would allow it to be added into this empty list parameter.
-                    # further map analysis below vvv 
-        # https://www.w3schools.com/python/ref_func_sum.asp
-    
-    # MAP 
-
-        # map: a python built-in function that "applies a given function to each item of iterable (like list, tuple etc.) and returns a list of results or map object." 
-            # if two parameters it is map(function, iterable)
-            # the function must have ONE parameter for each iterable 
-            # you can add iterables that would correspond to having more parameters in the function (which is the first parameter of map)
-            # it looks like the function passed in is lambda r: list(combinations(l, r)) and the iterable to have each number have that function done on it is range(1, len(l) +1)) 
-                # further analysis of combinations and lambda below vvv
-        #  https://www.geeksforgeeks.org/python-pass-multiple-arguments-to-map-function/
-
-    # COMBINATIONS 
-    
-        # combinations: a python itertools function that returns "r length subsequences of elements from the input iterable."
-                      # "The output is a subsequence of product() keeping only entries that are subsequences of the iterable. The length of the output is given by math.comb() which computes n! / r! / (n - r)! when 0 ≤ r ≤ n or zero when r > n." 
-                      # seems like this is what I learned in CS 151. Combinations WITHOUT repeats. Remember order doesn't matter like it does with permutations.
-            # Some examples: 
-                # combinations('ABCD', 2) → AB AC AD BC BD CD
-                # combinations(range(4), 3) → 012 013 023 123
-
-        # https://docs.python.org/3/library/itertools.html#itertools.combinations
-    
-    # LAMBDA 
-
-        # lambda: "A lambda function is a small anonymous function. A lambda function can take any number of arguments, but can only have one expression."
-            # simple example: 
-                # x = lambda a : a + 10
-                # print(x(5))
-                # ouput is 15. 
-        # lambda is often used as the return for another function so you can make custom small functions. This is how it is used here, notingly. 
-            # simple example (Use that function definition to make a function that always doubles the number you send in): 
-                # def myfunc(n):
-                    # return lambda a : a * n
-
-            # mydoubler = myfunc(2)
-
-            # print(mydoubler(11))
-        # https://www.w3schools.com/python/python_lambda.asp
-    
-    # RANGE 
-
-        # range: a python built-in "function that returns a sequence of numbers, starting from 0 by default, and increments by 1 (by default), and stops before a specified number." 
-            # if two parameters it is range(start that is inclusive, stop that is exclusive)
-            # in this case, start is 1 and the length of l is the last number that will be returned.
-        # https://www.w3schools.com/python/ref_func_range.asp
-
-    # SO, after dissection of subset_of(l), this is what I understand: 
-        # There is a lot happening, but to put it together let's go from the innermost part to the outermost part.
-            # the map function is using lambda and creating a combinations function for all lengths of l from 1 to l. 
-                # so now there are l amount of functions that allow you to return all the subsets of that specific l of any inputted length r.  
-        # The user must specify the length with a parameter (which in this case is r)
-        # The sum function I am not currently sure why it is there. Perhaps it creates a list of the function definitions? 
+           
 class Pippenger:
-
-    # Constructor of the pippenger class 
-    # Note: self is like the "this" keyword in C++ 
+    
+    # Constructor of the pippenger class
+    # Note: self is like the "this" keyword in C++
     def __init__(self, group : Group):
         self.G : Group = group
         'G is the group used to initialize the Pippenger instance.'
@@ -153,7 +92,7 @@ class Pippenger:
         self.order : int = group.order
         'Order p = 2^lambda'
         
-        self.lamb : int = group.order.bit_length()
+        self.lamb : int = group.order.bit_length()source //scratch/aross50/virtEnvs/vAllo/bin/activate
         'lamb is the number of bits required to represent the order.'
 
     # Returns g^(2^j)
@@ -256,7 +195,7 @@ class Pippenger:
 
     # _multiexp_bin - Maya 
         
-    def _multiexp_bin(self, gs: list[Group], es: list[int] -> list[ModP | Point]):
+    def _multiexp_bin(self, gs: list[Group], es: list[int] -> list):
         # gs is a list of elements of G, es is a list of integer exponents
         # looks like gs and es have to be the same length 
         assert len(gs) == len(es)
@@ -340,14 +279,14 @@ class Pippenger:
                 set_sub(sub)
         # > 
 
-        Gs: list[None] = []
+        Gs: list = []
         # for k = 0 going up to minus one of the length of the first exponent in es
         for k in range(len(es[0])):
             # TODO: Change in allo? 
             tmp: ModP | Point = self.G.unit
             for T,S in zip(Ts, subsets):
-                #  Another list comprehension.
-                sub_es: list[list[int]]  = [j for j in S if es[j][k]]
+                #  Another list comprehension.      sub_es = [j for j in S if es[j][k]]
+                sub_es: list  = [j for j in S if es[j][k]]
                 sub_es = tuple(sub_es)
                 if not sub_es:
                     continue

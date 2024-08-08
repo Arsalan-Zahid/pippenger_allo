@@ -145,7 +145,7 @@ def subset_of(l):
 class Pippenger:
 
     # Constructor of the pippenger class 
-    # Note: self is like the this keyword in C++ 
+    # Note: self is like the "this" keyword in C++ 
     def __init__(self, group : Group):
         self.G : Group = group
         'G is the group used to initialize the Pippenger instance.'
@@ -265,16 +265,49 @@ class Pippenger:
         # b is the floor of a calculation that appeared in effeciency analysis section of Bootle's paper. 
         # This calculation also appeared in section 6 of Bernstein's paper under "Recursion level 1"
         b: int = floor( log2(M) - log2(log2(M)) )                                 
-        b = b if b else 1 # prevents b from being 0 i
+        b = b if b else 1 # prevents b from being 0
 
-        # TODO
         # Figure out what subsets is and TS 
 
-        # Subsets -> 
+        # 1. Subsets 
+
+            # First of all, what is the min function? 
+                # a python built-in function that "returns the item with the lowest value, or the item with the lowest value in an iterable." 
+                    # min(n1, n2, n3, ...) 
+                    # or 
+                    # min(iterable)
+                    # simple example:
+                        # a = (1, 5, 3, 9)
+                        # x = min(a)
+                        # output is 1
+                    # https://www.w3schools.com/python/ref_func_min.asp
+
+            # NOTE, subsets is defined using list comprehension 
+                # The syntax
+                    # newlist = [expression for item in iterable if condition == True] 
+                    # "The condition is optional and can be omitted."
+                    # "The expression is the current item in the iteration, but it is also the outcome, which you can manipulate before it ends up like a list item in the new list."
+                # simple example: 
+                    # newlist = [x for x in fruits if x != "apple"] 
+                    # ^^ Only accept items that are not "apple" ^^ 
+                # https://www.w3schools.com/python/python_lists_comprehension.asp
+
+            # NOTE that i, M, and b are integers. 
+            # This list comprehension is generating the list of subsets 
+                # Inner parts: 
+                    # range(0, M, b): This creates a range of integers starting from 0 up to M (exclusive) with a step of b. It generates the starting indices for each subset.
+                    # range(i, min(i+b, M)): For each i in the range, this creates a range from i to min(i+b, M). This range determines the elements in each subset. The min(i+b, M) ensures that the range does not exceed M.
+                    # list(...): This converts each range object into a list of integers.
+                # ^^ explained by GPT and I think it makes sense. I don't think I should spend too much time on the small details and GPT has been a great help at accelerating my understandings of this code. 
+                    # I am guided on what to look up, such as list comprehension 
+                # https://chatgpt.com/share/fba22a15-2351-45f2-8d0b-f300b55dd5a4
+       
+
         subsets: list[list[int]] = [list(range(i,min(i+b,M))) for i in range(0,M,b)]
 
-        # TS -> 
-        Ts = [{sub: None for sub in subset_of(S)} for S in subsets] 
+        # 2. Ts  
+
+        Ts: Dict[tuple, None] = [{sub: None for sub in subset_of(S)} for S in subsets] 
 
         for T,S in zip(Ts, subsets):
             for i in S:

@@ -340,7 +340,7 @@ class Pippenger:
                 set_sub(sub)
         # > 
 
-        # https://chatgpt.com/share/8479253c-7211-4880-9fbc-27970774db48
+        # https://chatgpt.com/share/90b643ad-c1f7-49c6-8de8-802d05175062
         # > 
         Gs: list[None] = []
         # for k = 0 going up to minus one of the length of the first exponent in es

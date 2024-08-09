@@ -315,7 +315,7 @@ class Pippenger:
             # Purpose: This creates a list of dictionaries, each storing all non-empty subsets of S as keys, effectively capturing the power set (excluding the empty set) for each S.
         # https://chatgpt.com/share/0fc42105-691b-4886-ab97-ff2fb94039c2
 
-        Ts: Dict[tuple[int, ...], None] = [{sub: None for sub in subset_of(S)} for S in subsets] 
+        Ts: dict[tuple[int, ...], None] = [{sub: None for sub in subset_of(S)} for S in subsets] 
 
         # What is the zip function: 
             # It is a python built-in function that returns a zip object, which is an iterator of tuples where the first item in each passed iterator is paired together, and then the second item in each passed iterator are paired together etc.
@@ -351,6 +351,7 @@ class Pippenger:
                 sub_es = tuple(sub_es)
                 if not sub_es:
                     continue
+                # TODO: Change in allo?
                 tmp = self.G.mult(tmp, T[sub_es])
             Gs.append(tmp)
             

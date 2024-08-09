@@ -341,6 +341,7 @@ class Pippenger:
         # > 
 
         # https://chatgpt.com/share/90b643ad-c1f7-49c6-8de8-802d05175062
+        # https://chatgpt.com/share/8658709e-0ceb-487a-bc41-8874e94657fd
         # > 
         Gs: list[None] = []
         # for k = 0 going up to minus one of the length of the first exponent in es

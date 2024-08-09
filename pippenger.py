@@ -340,6 +340,8 @@ class Pippenger:
                 set_sub(sub)
         # > 
 
+        # https://chatgpt.com/share/8479253c-7211-4880-9fbc-27970774db48
+        # > 
         Gs: list[None] = []
         # for k = 0 going up to minus one of the length of the first exponent in es
         for k in range(len(es[0])):
@@ -356,6 +358,7 @@ class Pippenger:
             Gs.append(tmp)
             
         return Gs
+        # > 
     
     '''
     sch0 = allo.customize(__init__, instantiate=[concrete_type, p, q, r])

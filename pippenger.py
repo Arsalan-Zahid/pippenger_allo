@@ -359,7 +359,10 @@ class Pippenger:
             
         return Gs
         # > 
-    
+   
+   # Note: Chat GPT is not always 100 percent accurate but every link was reviewed by me and I feel like its explanation makes sense and gives enough context for our purposes. If I were to dissect the code myself it would take a lot longer 
+   # and we have limited time. 
+
     '''
     sch0 = allo.customize(__init__, instantiate=[concrete_type, p, q, r])
     sch1 = allo.customize(_pow2ofpow2, instantiate=[concrete_type, p, r])
